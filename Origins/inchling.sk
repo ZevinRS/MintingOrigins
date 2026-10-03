@@ -1,0 +1,54 @@
+on load:
+    add "&a+&7 Bite Sized: You are a quarter the size of a normal player" to {_lore::*}
+    add "&a+&7 Nimble: You are immune to fall, thorns, and sweet berry damage" to {_lore::*}
+    add "&a+&7 Climbing: You are able to climb up any wall" to {_lore::*}
+    add "&a+&7 Jocky: You are able to ride other players" to {_lore::*}
+    add "&c-&7 Small Heart: You only have 5 hearts" to {_lore::*}
+    add "&c-&7 Short Arms: You have -1 block of reach" to {_lore::*}
+    registerOrigin("Inchling", "f", 22, anvil of unbreaking 1 named "&fInchling" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Inchling")
+
+every 1 second:
+    loop all players where [{zevorigins.origin.player::%input's uuid%} is "Inchling"]:
+        set loop-player's scale attribute to 0.25
+        set loop-player's jump strength attribute to 0.3
+        set loop-player's max health to 5
+        set loop-player's block interaction range attribute to 3.5
+        set loop-player's entity interaction range attribute to 2
+
+on player move:
+    if {zevorigins.origin.player::%player's uuid%} is "Inchling":
+        if distance between player and player's targeted block is less than 1:
+            player's pitch is between 64 and -91:
+                if y coordinate of player's targeted block >= y coordinate of player:
+                    # for anyone reading this in the future, having these nested if statements is NOT my fault, skript is just stupid and wont let me use or statements
+                    if player's targeted block is not tagged with tag "minecraft:replaceable":
+                        if player's targeted block is not tagged with tag "minecraft:bee_growables":
+                            if player's targeted block is not tagged with tag "minecraft:bee_food":
+                                apply levitation 1 without any particles whilst hiding the potion icon to player for 0.7 seconds replacing the existing effect
+
+on damage:
+    if {zevorigins.origin.player::%victim's uuid%} is "Inchling":
+        if damage cause is fall:
+            cancel event
+        if damage cause is thorns:
+            cancel event
+        if damage cause is contact:
+            cancel event
+
+on right click on player:
+    if {zevorigins.origin.player::%player's uuid%} is "Inchling":
+        make player ride event-entity
+
+on player attempt item pickup:
+    if player is riding player:
+        cancel event
+
+on sneak toggle:
+    if passenger of player is set:
+        make passenger of player dismount
+
+on click:
+    damage passenger of player by 2

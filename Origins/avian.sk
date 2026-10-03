@@ -1,0 +1,15 @@
+on load:
+    add "&a+&7 Tailwind: You have speed 1" to {_lore::*}
+    add "&8=&7 Featherweight: You have feather falling 1" to {_lore::*}
+    add "&c-&7 Vegetarian: You cant eat meat" to {_lore::*}
+    registerOrigin("Avian", "f", 11, feather of unbreaking 1 named "&fAvian" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Avian")
+
+every 1 second:
+    loop all players:
+        if {zevorigins.origin.player::%loop-player's uuid%} is "Avian":
+            apply slow falling 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+            if potion level of speed on loop-player != 2:
+                apply speed 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect

@@ -1,0 +1,33 @@
+on load:
+    add "&a+&7 Phantom Form: Press your offhand" and "&7swap key to turn invisible" to {_lore::*}
+    add "&c-&7 Hungry Hunter: You lose hunger" and "&7faster while in phantom form" to {_lore::*}
+    add "&c-&7 Fragile: You have 3 less hearts than a normal player" to {_lore::*}
+    registerOrigin("Phantom", "f", 12, phantom membrane of unbreaking 1 named "&fPhantom" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Phantom")
+
+on swap hand items:
+    if {zevorigins.origin.player::%player's uuid%} is "Phantom":
+        cancel event
+        {zevorigins.origin.powers::%player's uuid%::phantomized} is set:
+            delete {zevorigins.origin.powers::%player's uuid%::phantomized}
+            remove invisibility from player's active potion effects
+            remove potion effect of hunger from player's active potion effects
+            stop
+        {zevorigins.origin.powers::%player's uuid%::phantomized} is not set:
+            set {zevorigins.origin.powers::%player's uuid%::phantomized} to true
+            apply invisibility 1 without any particles whilst hiding the potion icon to player for 3 seconds replacing the existing effect
+            apply hunger 2 without any particles whilst hiding the potion icon to player for 3 seconds replacing the existing effect
+            stop
+
+every 1 second:
+    loop all players:
+        if {zevorigins.origin.powers::%loop-player's uuid%::phantomized} is set:
+            apply invisibility 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+            apply hunger 2 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+
+every 2 seconds:
+    loop all players:
+        if {zevorigins.origin.player::%loop-player's uuid%} is "Phantom":
+            set loop-player's max health to 7

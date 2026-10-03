@@ -1,0 +1,29 @@
+options:
+    orb: slime ball of unbreaking 1 named "&2&lOrb of Origin" with lore "&9Right click to change your origin!" with hide enchants item flag
+    prefix: <##22FF00>&lOrigins &8|&7
+    permprefix: zevorigins
+
+on join:
+    if {zevorigins.origin.player::%player's uuid%} is not set:
+        wait 1 second
+        originsGui(player)
+
+command giveorb:
+    permission: {@permprefix}.giveorb
+    trigger:
+        send "{@prefix} You have been given an orb of origin"
+        give player {@orb}
+
+on right click:
+    if 1 of player's tool is {@orb}:
+        remove 1 of {@orb} from player's inventory
+        unsetOrigin(player)
+        originsGui(player)
+
+every 1 second:
+    loop all players:
+        if {zevorigins.origin.cooldown::%loop-player's uuid%} is set:
+            set {zevorigins.origin.cooldown::%loop-player's uuid%} to {zevorigins.origin.cooldown::%loop-player's uuid%} - 1 second
+            send action bar "&fAbility Cooldown: %{zevorigins.origin.cooldown::%loop-player's uuid%}%" to loop-player
+            if {zevorigins.origin.cooldown::%loop-player's uuid%} is less than 1 second:
+                delete {zevorigins.origin.cooldown::%loop-player's uuid%}

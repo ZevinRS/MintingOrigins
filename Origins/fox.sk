@@ -1,0 +1,71 @@
+on load:
+    add "&a+&7 Pounce: Press your offhand swap key to get launched in the air" and "&7with +6 damage as you're falling" to {_lore::*}
+    add "&a+&7 Light Body: You have permanent jump boost 1 and speed 1" to {_lore::*}
+    add "&a+&7 Mighty Mouth: By pressing your offhand swap key and sneaking you" and "&7can open up a second inventory with 9 slots" and "&7that keeps on death" to {_lore::*}
+    add "&a+&7 Acrobatics: You never take fall damage" to {_lore::*}
+    add "&a+&7 Nocturnal: You have permanent night vision" to {_lore::*}
+    add "&a+&7 Berry Craver: You gain 1 extra hunger point from sweat berries" to {_lore::*}
+    add "&8=&7 Fox Size: You are slightly shorter than a normal player" to {_lore::*}
+    add "&c-&7 Fast Metabolism: you loose hunger faster" to {_lore::*}
+    add "&c-&7 Unwieldy: You cannot use shields" to {_lore::*}
+    add "&c-&7 Smaller Heart: You have 6 max hearts" to {_lore::*}
+    registerOrigin("Fox", "6", 21, sweet berries of unbreaking 1 named "&6Fox" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Fox")
+
+on consume:
+    if {zevorigins.origin.player::%player's uuid%} is "Fox":
+        event-item is sweet berries:
+            wait 1 tick
+            add 1 to player's food level
+            
+on swap hand items:
+    if {zevorigins.origin.player::%player's uuid%} is "Fox":
+        if player is sneaking:
+            cancel event
+            set {_foxinv} to dropper inventory named colored "&6Fox Inventory"
+            add {zevorigins.origin.fox.foxinventory.%player's uuid%::*} to {_foxinv}
+            remove all gray stained glass pane named "&fAir Placeholder" with lore "&cIf you're seeing this contact zevcraft on discord because there is a bug" from {_foxinv}
+            delete {zevorigins.origin.fox.foxinventory.%player's uuid%::*}
+            open {_foxinv} to player
+        if player is not sneaking:
+            {zevorigins.origin.cooldown::%player's uuid%} is not set:
+                cancel event
+                set {zevorigins.origin.cooldown::%player's uuid%} to 2 minutes
+                push player upwards at speed 1
+                set player's attack damage attribute to 7
+                wait 2 seconds
+                set player's attack damage attribute to 1
+            
+on damage:
+    if {zevorigins.origin.player::%victim's uuid%} is "Fox":
+        damage cause is fall:
+            cancel event
+        
+on inventory close:
+    if {zevorigins.origin.player::%player's uuid%} is "Fox":
+        name of event-inventory is "&6Fox Inventory":
+            add 5184 gray stained glass pane named "&fAir Placeholder" with lore "&cIf you're seeing this contact zevcraft on discord because there is a bug" to event-inventory
+            loop items in event-inventory:
+                add loop-item to {zevorigins.origin.fox.foxinventory.%player's uuid%::*}
+                
+on right click:
+    if {zevorigins.origin.player::%player's uuid%} is "Fox":
+        if player's offhand tool is shield:
+            drop player's offhand tool at player
+            set player's offhand tool to air
+            send action bar "&cFoxes cannot use shields"
+        if player's tool is shield:
+            drop player's tool at player
+            set player's tool to air
+            send action bar "&cFoxes cannot use shields"
+
+every 1 seconds:
+    loop all players where [{zevorigins.origin.player::%input's uuid%} is "Fox"]:
+        apply night vision 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+        apply speed 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+        apply jump boost 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+        apply hunger 1 without any particles whilst hiding the potion icon to loop-player for 3 seconds replacing the existing effect
+        set loop-player's max health to 6
+        set loop-player's scale attribute to 0.85

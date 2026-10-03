@@ -1,0 +1,5 @@
+on load:
+    registerOrigin("Human", "8", 10, skull of "steve_skin" parsed as offline player named "&8Human" with lore "&8=&7 You are a normal player")
+
+on unload:
+    unregisterOrigin("Human")

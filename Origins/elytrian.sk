@@ -1,0 +1,37 @@
+options:
+    elytra: unbreakable elytra of curse of vanishing and curse of binding named "&fElytrian Elytra" with hide enchants item flag
+
+on load:
+    add "&a+&7 Winged: You have a permanent elytra" to {_lore::*}
+    add "&a+&7 Gift of Wings: You can launch yourself by clicking" and "&7your offhand swap key every minute" to {_lore::*}
+    add "&a+&7 Arial Combat: While flying you deal more damage" to {_lore::*}
+    add "&c-&7 Need for Mobility: You can't wear chestplates" to {_lore::*}
+    registerOrigin("Elytrian", "f", 13, elytra of unbreaking 1 named "&fElytrian" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Elytrian")
+
+on inventory click:
+	if {zevorigins.origin.player::%player's uuid%} is "Elytrian":
+		event-item is {@elytra}:
+			cancel event
+
+every 5 seconds:
+    loop all players:
+        if {zevorigins.origin.player::%loop-player's uuid%} is "Elytrian":
+            set chestplate of loop-player to {@elytra}
+        else:
+            if chestplate of loop-player is {@elytra}:
+                set chestplate of loop-player to air
+		
+on swap hand items:
+	if {zevorigins.origin.player::%player's uuid%} is "Elytrian":
+		cancel event
+		if {zevorigins.origin.cooldown::%player's uuid%} is not set:
+			set {zevorigins.origin.cooldown::%player's uuid%} to 1 minute
+			push player upwards at speed 2.5
+
+on damage:
+    if {zevorigins.origin.player::%attacker's uuid%} is "Elytrian":
+        if attacker is gliding:
+            set damage to damage + 1.5

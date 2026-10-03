@@ -1,0 +1,23 @@
+options:
+    prefix: <##22FF00>&lOrigins &8|&7
+    permprefix: zevorigins
+
+function showOrigin(player: player, origin: text):
+    set {_gui} to hopper inventory named colored "&2Origin: &%{zevorigins.origin.color::%{_origin}%}%%{_origin}%"
+    set slots 0,1,2,3 and 4 of {_gui} to gray stained glass pane named " "
+    set slot 2 of {_gui} to {zevorigins.origin.icon::%{_origin}%}
+    open {_gui} to {_player}
+
+command getorigin [<player>]:
+    permission: {@permprefix}.getorigin
+    permission message: {@prefix} Sorry, you do not have permission to use this command.
+    trigger:
+        if arg-1 is not set:
+            showOrigin(player, {zevorigins.origin.player::%player's uuid%})
+            stop
+        showOrigin(player, {zevorigins.origin.player::%arg-1's uuid%})
+
+on inventory click:
+    if clicked inventory is not player's inventory:
+        if name of event-inventory contains "&2Origin: ":
+            cancel event

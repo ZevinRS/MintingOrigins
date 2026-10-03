@@ -1,0 +1,25 @@
+on load:
+    add "&a+&7 Acrobatics: you take no fall damage" to {_lore::*}
+    add "&a+&7 Strong Ankles: You gain jump boost while sprinting" to {_lore::*}
+    add "&c-&7 Nine Lives: You have 9 hearts total" to {_lore::*}
+    registerOrigin("Feline", "6", 15, orange wool of unbreaking 1 named "&6Feline" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Feline")
+
+on sprint toggle:
+    if {zevorigins.origin.player::%player's uuid%} is "Feline":
+        if player is not sprinting:
+            apply jump boost 2 without any particles whilst hiding the potion icon to player for 999 days replacing the existing effect
+        if player is sprinting:
+            remove jump boost from player's active potion effects
+
+on damage:
+    if {zevorigins.origin.player::%victim's uuid%} is "Feline":
+        if damage cause is fall:
+            cancel event
+
+every 2 seconds:
+    loop all players:
+        if {zevorigins.origin.player::%loop-player's uuid%} is "Feline":
+            set loop-player's max health to 9

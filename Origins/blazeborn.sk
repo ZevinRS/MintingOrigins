@@ -1,0 +1,23 @@
+on load:
+    add "&a+&7 Fire Immunity: You dont take fire damage" to {_lore::*}
+    add "&a+&7 Burning Wrath: You gain strength while on fire" to {_lore::*}
+    add "&c-&7 Hydrophobia: You receive damage over" and "&7time while in contact with water." to {_lore::*}
+    registerOrigin("Blazeborn", "c", 14, blaze powder of unbreaking 1 named "&cBlazeborn" with lore {_lore::*} with hide enchants item flag)
+
+on unload:
+    unregisterOrigin("Blazeborn")
+
+on damage:
+    if {zevorigins.origin.player::%victim's uuid%} is "Blazeborn":
+        if damage cause is burning or fire or lava:
+            cancel event
+            if potion level of strength on victim != 2:
+                apply strength 1 without any particles whilst hiding the potion icon to victim for 2 seconds replacing the existing effect
+        if damage cause is magma:
+            cancel event
+            
+on walking on water:
+    if {zevorigins.origin.player::%player's uuid%} is "Blazeborn":
+        if block above the block below player is water:
+            damage player by 1 heart
+            wait 1 second

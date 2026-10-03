@@ -1,0 +1,37 @@
+options:
+    prefix: <##22FF00>&lOrigins &8|&7
+
+function registerOrigin(name: text, color: text, slot: integer, icon: item):
+    if {zevorigins.origins::*} does not contain {_name}:
+        add {_name} to {zevorigins.origins::*}
+        set {zevorigins.origin.slot::%{_name}%} to {_slot}
+        set {zevorigins.origin.color::%{_name}%} to {_color}
+        set {zevorigins.origin.icon::%{_name}%} to {_icon}
+
+function unregisterOrigin(name: text):
+    remove {_name} from {zevorigins.origins::*}
+    delete {zevorigins.origin.color::%{_name}%}
+    delete {zevorigins.origin.icon::%{_name}%}
+
+function setOrigin(player: player, origin: text):
+    set {zevorigins.origin.player::%{_player}'s uuid%} to {_origin}
+    close {_player}'s inventory
+    send colored "{@prefix} You have selected &%{zevorigins.origin.color::%{_origin}%}%%{_origin}%" to {_player}
+    
+function unsetOrigin(player: player):
+    delete {zevorigins.origin.player::%{_player}'s uuid%}
+    delete {zevorigins.origin.powers::%{_player}'s uuid%::*}
+    set {_player}'s max health to 10
+    delete {zevorigins.origin.cooldown::%{_player}'s uuid%}
+    set {_player}'s block interaction range attribute to 4.5
+    set {_player}'s entity interaction range attribute to 3
+    set {_tmp} to {zevorigins.origins.enderian.iswearingpumpkin.husktracker::%{_player}'s uuid%} parsed as entity
+    delete {zevorigins.origins.enderian.iswearingpumpkin.husktracker::%{_player}'s uuid%}
+    wait 1 tick
+    kill {_tmp}
+    reveal all players where [metadata tag "vanished" of input is not true] to {_player}
+    set {_player}'s armor attribute to 0
+    clear {_player}'s potion effects
+    set {_player}'s scale attribute to 1
+    set {_player}'s jump strength attribute to 0.41999998688697815
+    set {_player}'s scale attribute to 1

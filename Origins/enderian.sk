@@ -1,0 +1,78 @@
+on load:
+    add "&a+&7 Teleportation: Press you offhand swap" and "&7key to throw a enderpearl" to {_lore::*}
+    add "&a+&7 Slender Body: You have +1.5 blocks of reach" to {_lore::*}
+    add "&c-&7 Hydrophobia: You receive damage over" and "&7time while in contact with water" to {_lore::*}
+    add "&c-&7 Scared of Gourds: You cannot see players wearing a pumpkin" to {_lore::*}
+    registerOrigin("Enderian", "9", 16, ender pearl of unbreaking 1 named "&9Enderian" with lore {_lore::*} with hide enchants item flag)
+    #set collison rule team state of team named "nocollide" to never
+
+
+on unload:
+    unregisterOrigin("Enderian")
+
+on swap hand items:
+    if {zevorigins.origin.player::%player's uuid%} is "Enderian":
+        if {zevorigins.origin.cooldown::%player's uuid%} is not set:
+            cancel event
+            set {zevorigins.origin.cooldown::%player's uuid%} to 5 seconds
+            shoot ender pearl from player at speed 1.7
+            set metadata tag "enderian_pearl" of player to true
+
+on damage:
+    if damage cause is projectile:
+        if metadata tag "enderian_pearl" of attacker is true:
+            cancel event
+            delete metadata tag "enderian_pearl" of attacker
+
+
+on damage:
+    if {zevorigins.origins.enderian.iswearingpumpkin.husktracker::*} contains attacker's uuid:
+        cancel event
+    loop {zevorigins.origins.enderian.iswearingpumpkin.husktracker::*}:
+        if loop-value is victim's uuid:
+            if {zevorigins.origins.enderian.iswearingpumpkin.husktracker::*} contains victim's uuid:
+                set {_player} to loop-index parsed as player
+                set {zevorigins.origin.enderian.husktracker.velocity::%loop-index%} to true
+                wait 1 tick
+                set {_velo} to velocity of victim
+                damage {_player} by damage
+                set velocity of {_player} to {_velo}
+                play sound "entity.player.hurt" for attacker
+                delete {zevorigins.origin.enderian.husktracker.velocity::%loop-index%}
+
+on death:
+    if {zevorigins.origins.enderian.iswearingpumpkin.husktracker::*} contains victim's uuid:
+        cancel event
+        heal victim
+
+every 1 tick:
+    loop all players:
+        if loop-player's helmet is carved pumpkin:
+            if {zevorigins.origins.enderian.iswearingpumpkin::%loop-player's uuid%} is not set:
+                set {zevorigins.origins.enderian.iswearingpumpkin::%loop-player's uuid%} to true
+                spawn a husk at loop-player
+                set {zevorigins.origins.enderian.iswearingpumpkin.husktracker::%loop-player's uuid%} to uuid of last spawned husk
+                apply invisibility 1 without any particles to last spawned husk for 999 days
+                add last spawned husk to team named "nocollide"
+                hide last spawned husk for all players where [{zevorigins.origin.player::%input's uuid%} is not "Enderian"]
+            if {zevorigins.origin.enderian.husktracker.velocity::%loop-player's uuid%} is not set:
+                teleport {zevorigins.origins.enderian.iswearingpumpkin.husktracker::%loop-player's uuid%} parsed as entity to loop-player
+            loop all players where [{zevorigins.origin.player::%input's uuid%} is "Enderian"]:
+                if loop-player-2 is not loop-player-1:
+                    hide loop-player-1 from loop-player-2
+        else:
+            if {zevorigins.origins.enderian.iswearingpumpkin::%loop-player's uuid%} is true:
+                set {_tmp} to {zevorigins.origins.enderian.iswearingpumpkin.husktracker::%loop-player's uuid%} parsed as entity
+                delete {zevorigins.origins.enderian.iswearingpumpkin::%loop-player's uuid%}
+                delete {zevorigins.origins.enderian.iswearingpumpkin.husktracker::%loop-player's uuid%}
+                wait 1 tick
+                kill {_tmp}
+            loop all players where [{zevorigins.origin.player::%input's uuid%} is "Enderian"]:
+                reveal loop-player-1 to loop-player-2
+
+every 1 second:
+    loop all players where [{zevorigins.origin.player::%input's uuid%} is "Enderian"]:
+        set loop-player's block interaction range attribute to 5.5
+        set loop-player's entity interaction range attribute to 4.5
+        if block above the block below loop-player is water:
+            damage loop-player by 1 heart

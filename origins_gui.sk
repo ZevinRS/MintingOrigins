@@ -1,0 +1,30 @@
+options:
+    emptyslot: gray stained glass pane named " "
+    guiname: &aOrigin Picker
+
+function originsGui(player: player):
+    set {_gui} to a new chest inventory with 4 rows with name "{@guiname}"
+    loop 36 times:
+        set slot loop-value - 1 of {_gui} to {@emptyslot}
+    loop {zevorigins.origin.slot::*}:
+        set slot loop-value of {_gui} to {zevorigins.origin.icon::%loop-index%}
+    open {_gui} to {_player}
+
+on inventory click:
+    if clicked inventory is not player's inventory:
+        if name of event-inventory is "{@guiname}":
+            if {zevorigins.origin.player::%player's uuid%} is not set:
+                if event-slot is {@emptyslot}:
+                    cancel event
+                    stop
+                cancel event
+                wait 1 tick
+                set {_origin} to name of event-slot
+                set {_origin} to substring of {_origin} from characters 3 to the length of {_origin}
+                setOrigin(player, {_origin})
+
+on inventory close:
+    if name of event-inventory is "{@guiname}":
+        if {zevorigins.origin.player::%player's uuid%} is not set:
+            wait 1 tick
+            open event-inventory to player

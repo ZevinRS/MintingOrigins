@@ -1,0 +1,47 @@
+options:
+    prefix: <##22FF00>&lOrigins &8|&7
+    permprefix: zevorigins
+
+command openshulkinv <offline player>:
+    permission: {@permprefix}.openorigininv
+    trigger:
+        if {zevorigins.origin.shulk.shulkinventory.%arg-1's uuid%::*} is not set:
+            send "{@prefix} That arg-1 does not have a shulker inventory"
+            stop
+        set {_shulkinv} to dropper inventory named colored "&5Shulk Inventory: &f%arg-1%"
+        add {zevorigins.origin.shulk.shulkinventory.%arg-1's uuid%::*} to {_shulkinv}
+        remove all gray stained glass pane named "&fAir Placeholder" with lore "&cIf you're seeing this contact zevcraft on discord because there is a bug" from {_shulkinv}
+        delete {zevorigins.origin.shulk.shulkinventory.%arg-1's uuid%::*}
+        open {_shulkinv} to player
+        
+on inventory close:
+    name of event-inventory contains "&5Shulk Inventory:":
+        if player has permission "{@permprefix}.openorigininv":
+            set {_name} to name of event-inventory
+            replace all "&5Shulk Inventory: &f" in {_name} with ""
+            set {_name} to {_name} parsed as offline player
+            add 5184 gray stained glass pane named "&fAir Placeholder" with lore "&cIf you're seeing this contact zevcraft on discord because there is a bug" to event-inventory
+            loop items in event-inventory:
+                add loop-item to {zevorigins.origin.shulk.shulkinventory.%{_name}'s uuid%::*}
+
+command openfoxinv <offline player>:
+    permission: {@permprefix}.openorigininv
+    trigger:
+        if {zevorigins.origin.fox.foxinventory.%arg-1's uuid%::*} is not set:
+            send "{@prefix} That arg-1 does not have a foxer inventory"
+            stop
+        set {_foxinv} to dropper inventory named colored "&6Fox Inventory: &f%arg-1%"
+        add {zevorigins.origin.fox.foxinventory.%arg-1's uuid%::*} to {_foxinv}
+        remove all gray stained glass pane named "&fAir Placeholder" with lore "&cIf you're seeing this contact zevcraft on discord because there is a bug" from {_foxinv}
+        delete {zevorigins.origin.fox.foxinventory.%arg-1's uuid%::*}
+        open {_foxinv} to player
+        
+on inventory close:
+    name of event-inventory contains "&6Fox Inventory:":
+        if player has permission "{@permprefix}.openorigininv":
+            set {_name} to name of event-inventory
+            replace all "&6Fox Inventory: &f" in {_name} with ""
+            set {_name} to {_name} parsed as offline player
+            add 5184 gray stained glass pane named "&fAir Placeholder" with lore "&cIf you're seeing this contact zevcraft on discord because there is a bug" to event-inventory
+            loop items in event-inventory:
+                add loop-item to {zevorigins.origin.fox.foxinventory.%{_name}'s uuid%::*}

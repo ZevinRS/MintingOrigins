@@ -1,0 +1,67 @@
+on load:
+    add "&a+&7 All That Glitters: Golden weapons deal more damage" and "&7and golden armor gives more protection" to {_lore::*}
+    add "&a+&7 Crossbow Master: You deal 75 percent more damage with crossbows" to {_lore::*}
+    add "&c-&7 Flabby: You have 8 hearts instead of 10" to {_lore::*}
+    add "&c-&7 Golden Gluttony: You can only eat meat and golden food" to {_lore::*}
+    registerOrigin("Piglin", "6", 19, golden sword of unbreaking 1 named "&9Piglin" with lore {_lore::*} with hide enchants item flag)
+
+    # other setup
+    add golden apple to {zevorigins.foodlist.piglin::*}
+    add golden carrot to {zevorigins.foodlist.piglin::*}
+    add enchanted golden apple to {zevorigins.foodlist.piglin::*}
+    add porkchop to {zevorigins.foodlist.piglin::*}
+    add cooked porkchop to {zevorigins.foodlist.piglin::*}
+    add cod to {zevorigins.foodlist.piglin::*}
+    add cooked cod to {zevorigins.foodlist.piglin::*}
+    add salmon to {zevorigins.foodlist.piglin::*}
+    add cooked salmon to {zevorigins.foodlist.piglin::*}
+    add tropical fish to {zevorigins.foodlist.piglin::*}
+    add pufferfish to {zevorigins.foodlist.piglin::*}
+    add beef to {zevorigins.foodlist.piglin::*}
+    add cooked beef to {zevorigins.foodlist.piglin::*}
+    add chicken to {zevorigins.foodlist.piglin::*}
+    add cooked chicken to {zevorigins.foodlist.piglin::*}
+    add rotten flesh to {zevorigins.foodlist.piglin::*}
+    add spider eye to {zevorigins.foodlist.piglin::*}
+    add rabbit to {zevorigins.foodlist.piglin::*}
+    add cooked rabbit to {zevorigins.foodlist.piglin::*}
+    add rabbit stew to {zevorigins.foodlist.piglin::*}
+    add mutton to {zevorigins.foodlist.piglin::*}
+    add cooked mutton to {zevorigins.foodlist.piglin::*}
+    add milk bucket to {zevorigins.foodlist.piglin::*}
+
+on unload:
+    unregisterOrigin("Piglin")
+
+on damage:
+    if {zevorigins.origin.player::%attacker's uuid%} is "Piglin":
+        if attacker's tool is golden sword or golden axe:
+            set damage to damage + 2
+    if metadata tag "piglin_75" of event-projectile is true:
+        set damage to damage * 1.75
+    if {zevorigins.origin.player::%victim's uuid%} is "Piglin":
+        if victim's helmet is golden helmet:
+            set damage to damage * 0.95
+        if victim's chestplate is golden chestplate:
+            set damage to damage * 0.95
+        if victim's leggings is golden leggings:
+            set damage to damage * 0.95
+        if victim's boots is golden boots:
+            set damage to damage * 0.95
+
+on shoot:
+    if {zevorigins.origin.player::%shooter's uuid%} is "Piglin":
+        if shooter's tool is crossbow:
+            set metadata tag "piglin_75" of projectile to true
+
+on consume:
+    if {zevorigins.origin.player::%player's uuid%} is "Piglin":
+        add golden apple to {_items::*}
+        if {zevorigins.foodlist.piglin::*} does not contain event-item:
+            cancel event
+            send action bar "&cPiglins cannot eat food besides meat and gold"
+
+every 2 seconds:
+    loop all players:
+        if {zevorigins.origin.player::%loop-player's uuid%} is "Piglin":
+            set loop-player's max health to 8
